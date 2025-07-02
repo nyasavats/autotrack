@@ -1,0 +1,963 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AutoTrack - Manufacturing Inventory System</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0c0c0c;
+            color: #fff;
+            overflow-x: hidden;
+        }
+
+        /* ===== LANDING PAGE STYLES ===== */
+        .landing-page {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            background: linear-gradient(45deg, #000 0%, #1a1a1a 50%, #000 100%);
+        }
+
+        .landing-page::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.05) 0%, transparent 50%);
+            pointer-events: none;
+        }
+
+        .landing-content {
+            text-align: center;
+            z-index: 10;
+            max-width: 800px;
+            padding: 0 20px;
+        }
+
+        .logo-container {
+            margin-bottom: 40px;
+            animation: fadeInUp 1s ease-out;
+        }
+
+        .logo-icon {
+            font-size: 5rem;
+            color: #fff;
+            margin-bottom: 20px;
+            text-shadow: 0 0 30px rgba(255, 255, 255, 0.3);
+            animation: pulse 3s infinite;
+        }
+
+        .main-title {
+            font-size: 4.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #fff 0%, #ccc 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 20px;
+            letter-spacing: -2px;
+            animation: fadeInUp 1s ease-out 0.2s both;
+        }
+
+        .tagline {
+            font-size: 1.4rem;
+            color: #aaa;
+            margin-bottom: 15px;
+            font-weight: 300;
+            animation: fadeInUp 1s ease-out 0.4s both;
+        }
+
+        .subtitle {
+            font-size: 1rem;
+            color: #666;
+            margin-bottom: 50px;
+            font-style: italic;
+            animation: fadeInUp 1s ease-out 0.6s both;
+        }
+
+        .enter-button {
+            background: linear-gradient(135deg, #333 0%, #555 100%);
+            color: #fff;
+            border: 2px solid #666;
+            padding: 15px 40px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            position: relative;
+            overflow: hidden;
+            animation: fadeInUp 1s ease-out 0.8s both;
+        }
+
+        .enter-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transition: left 0.5s;
+        }
+
+        .enter-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(255, 255, 255, 0.1);
+            border-color: #999;
+        }
+
+        .enter-button:hover::before {
+            left: 100%;
+        }
+
+        .factory-info {
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            text-align: center;
+            color: #555;
+            font-size: 0.9rem;
+            animation: fadeInUp 1s ease-out 1s both;
+        }
+
+        /* ===== DASHBOARD PAGE STYLES ===== */
+        .dashboard-page {
+            display: none;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .header h1 {
+            font-size: 2.2rem;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .back-button {
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 8px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .back-button:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .header p {
+            color: #ccc;
+            font-size: 1rem;
+        }
+
+        .manufacturing-badges {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .badge {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            color: #ddd;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 25px;
+            text-align: center;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .stat-card .icon {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            color: #fff;
+        }
+
+        .stat-card .number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #fff;
+            margin-bottom: 5px;
+        }
+
+        .stat-card .label {
+            color: #aaa;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .panel {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .panel h3 {
+            margin-bottom: 20px;
+            color: #fff;
+            font-size: 1.3rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .rfid-simulator {
+            grid-column: span 2;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #ddd;
+        }
+
+        .input-group input, .input-group select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+            background: rgba(255, 255, 255, 0.05);
+            color: #fff;
+        }
+
+        .input-group input:focus, .input-group select:focus {
+            outline: none;
+            border-color: rgba(255, 255, 255, 0.3);
+            box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.1);
+        }
+
+        .input-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 15px;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #333, #555);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 12px 25px;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 255, 255, 0.1);
+            background: linear-gradient(135deg, #444, #666);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #800000, #a00000);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #006600, #008800);
+        }
+
+        .activity-log {
+            max-height: 400px;
+            overflow-y: auto;
+            margin-top: 20px;
+        }
+
+        .log-entry {
+            background: rgba(255, 255, 255, 0.05);
+            border-left: 4px solid #666;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            animation: slideIn 0.3s ease;
+        }
+
+        .log-entry.check-out {
+            background: rgba(200, 0, 0, 0.1);
+            border-left-color: #a00000;
+        }
+
+        .log-entry.check-in {
+            background: rgba(0, 150, 0, 0.1);
+            border-left-color: #008800;
+        }
+
+        .log-entry .timestamp {
+            font-size: 0.8rem;
+            color: #aaa;
+            margin-bottom: 5px;
+        }
+
+        .log-entry .details {
+            font-weight: 600;
+            color: #fff;
+        }
+
+        .inventory-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .inventory-table th,
+        .inventory-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            color: #fff;
+        }
+
+        .inventory-table th {
+            background: rgba(255, 255, 255, 0.05);
+            font-weight: 600;
+        }
+
+        .status-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .status-available {
+            background: rgba(0, 150, 0, 0.3);
+            color: #00ff00;
+        }
+
+        .status-checked-out {
+            background: rgba(200, 0, 0, 0.3);
+            color: #ff6666;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 300px;
+            margin-top: 20px;
+        }
+
+        .alert {
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .alert-success {
+            background: rgba(0, 150, 0, 0.2);
+            border: 1px solid #008800;
+            color: #00ff00;
+        }
+
+        .alert-error {
+            background: rgba(200, 0, 0, 0.2);
+            border: 1px solid #a00000;
+            color: #ff6666;
+        }
+
+        /* ===== ANIMATIONS ===== */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                text-shadow: 0 0 30px rgba(255, 255, 255, 0.3);
+            }
+            50% {
+                text-shadow: 0 0 50px rgba(255, 255, 255, 0.6);
+            }
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        /* ===== RESPONSIVE DESIGN ===== */
+        @media (max-width: 768px) {
+            .main-title {
+                font-size: 3rem;
+            }
+            
+            .tagline {
+                font-size: 1.2rem;
+            }
+            
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .rfid-simulator {
+                grid-column: span 1;
+            }
+            
+            .input-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .header-top {
+                flex-direction: column;
+                gap: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- LANDING PAGE -->
+    <div class="landing-page" id="landingPage">
+        <div class="landing-content">
+            <div class="logo-container">
+                <div class="logo-icon">
+                    <i class="fas fa-industry"></i>
+                </div>
+                <h1 class="main-title">AUTOTRACK</h1>
+                <p class="tagline">Smart Manufacturing Inventory Control</p>
+                <p class="subtitle">Advanced RFID-Based Asset Management for Industrial Operations</p>
+            </div>
+            
+            <button class="enter-button" onclick="enterDashboard()">
+                <i class="fas fa-arrow-right"></i> Enter System
+            </button>
+        </div>
+        
+        <div class="factory-info">
+            <i class="fas fa-map-marker-alt"></i> Factory Installation Ready | Import/Export Operations | Design & Manufacturing Hub
+        </div>
+    </div>
+
+    <!-- DASHBOARD PAGE -->
+    <div class="dashboard-page" id="dashboardPage">
+        <div class="container">
+            <div class="header">
+                <div class="header-top">
+                    <h1><i class="fas fa-industry"></i> AutoTrack Manufacturing</h1>
+                    <button class="back-button" onclick="goToLanding()">
+                        <i class="fas fa-arrow-left"></i> Back to Home
+                    </button>
+                </div>
+                <p>Real-time inventory tracking and asset management for manufacturing operations</p>
+                <div class="manufacturing-badges">
+                    <span class="badge"><i class="fas fa-cogs"></i> Manufacturing</span>
+                    <span class="badge"><i class="fas fa-shipping-fast"></i> Import/Export</span>
+                    <span class="badge"><i class="fas fa-drafting-compass"></i> Design</span>
+                    <span class="badge"><i class="fas fa-industry"></i> Factory Floor</span>
+                </div>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="icon"><i class="fas fa-boxes"></i></div>
+                    <div class="number" id="totalItems">0</div>
+                    <div class="label">Total Assets</div>
+                </div>
+                <div class="stat-card">
+                    <div class="icon"><i class="fas fa-check-circle"></i></div>
+                    <div class="number" id="availableItems">0</div>
+                    <div class="label">Available</div>
+                </div>
+                <div class="stat-card">
+                    <div class="icon"><i class="fas fa-sign-out-alt"></i></div>
+                    <div class="number" id="checkedOutItems">0</div>
+                    <div class="label">In Use</div>
+                </div>
+                <div class="stat-card">
+                    <div class="icon"><i class="fas fa-activity"></i></div>
+                    <div class="number" id="todayActivity">0</div>
+                    <div class="label">Today's Activity</div>
+                </div>
+            </div>
+
+            <div id="alertContainer"></div>
+
+            <div class="main-content">
+                <div class="panel rfid-simulator">
+                    <h3><i class="fas fa-wifi"></i> RFID Asset Scanner</h3>
+                    <div class="input-row">
+                        <div class="input-group">
+                            <label for="rfidId">RFID Tag ID</label>
+                            <input type="text" id="rfidId" placeholder="e.g., MFG001234">
+                        </div>
+                        <div class="input-group">
+                            <label for="itemName">Asset/Equipment Name</label>
+                            <input type="text" id="itemName" placeholder="e.g., CNC Machine">
+                        </div>
+                        <div class="input-group">
+                            <label for="action">Action</label>
+                            <select id="action">
+                                <option value="check-in">Check In</option>
+                                <option value="check-out">Check Out</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="input-row">
+                        <div class="input-group">
+                            <label for="location">Factory Location</label>
+                            <input type="text" id="location" placeholder="e.g., Production Floor A">
+                        </div>
+                        <div class="input-group">
+                            <label for="employee">Operator ID</label>
+                            <input type="text" id="employee" placeholder="e.g., OP001">
+                        </div>
+                        <div class="input-group" style="display: flex; align-items: end;">
+                            <button class="btn" onclick="simulateRFID()">
+                                <i class="fas fa-satellite-dish"></i> Scan Asset
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="panel">
+                    <h3><i class="fas fa-chart-line"></i> Activity Analytics</h3>
+                    <div class="chart-container">
+                        <canvas id="activityChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="panel">
+                    <h3><i class="fas fa-history"></i> Live Activity Feed</h3>
+                    <div class="activity-log" id="activityLog">
+                        <div class="log-entry">
+                            <div class="timestamp">System Initialized</div>
+                            <div class="details">AutoTrack Manufacturing System Online - Ready for Operations</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel">
+                <h3><i class="fas fa-table"></i> Manufacturing Asset Inventory</h3>
+                <table class="inventory-table">
+                    <thead>
+                        <tr>
+                            <th>RFID ID</th>
+                            <th>Asset/Equipment</th>
+                            <th>Location</th>
+                            <th>Status</th>
+                            <th>Last Updated</th>
+                            <th>Operator</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="inventoryTableBody">
+                        <!-- Data will be populated by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global variables
+        let inventory = {};
+        let activityHistory = [];
+        let activityChart;
+
+        // Page navigation
+        function enterDashboard() {
+            document.getElementById('landingPage').style.display = 'none';
+            document.getElementById('dashboardPage').style.display = 'block';
+            initDashboard();
+        }
+
+        function goToLanding() {
+            document.getElementById('dashboardPage').style.display = 'none';
+            document.getElementById('landingPage').style.display = 'flex';
+        }
+
+        // Initialize the dashboard
+        function initDashboard() {
+            updateStats();
+            initActivityChart();
+            loadSampleData();
+        }
+
+        // Load sample manufacturing data
+        // Load sample manufacturing data
+        function loadSampleData() {
+            const sampleItems = [
+                { rfidId: 'SPT001', itemName: 'Spinning Tool Machine #1', location: 'Production Floor A', status: 'available', employee: 'N/A', category: 'Spinning', maxTemp: 'N/A' },
+                { rfidId: 'HYD002', itemName: 'Hydraulic Pressing Machine', location: 'Press Section', status: 'checked-out', employee: 'OP001', category: 'Pressing', maxTemp: 'N/A' },
+                { rfidId: 'PWD003', itemName: 'Powder Coating Gun', location: 'Coating Bay', status: 'available', employee: 'N/A', category: 'Coating', maxTemp: 'N/A' },
+                { rfidId: 'CAB004', itemName: 'Powder Coating Cabinet', location: 'Coating Bay', status: 'available', employee: 'N/A', category: 'Coating', maxTemp: 'N/A' },
+                { rfidId: 'FUR005', itemName: 'Industrial Furnace', location: 'Heat Treatment Zone', status: 'checked-out', employee: 'HT001', category: 'Furnace', maxTemp: '1150°C' },
+                { rfidId: 'UV006', itemName: 'UV Printing Machine', location: 'Printing Section', status: 'available', employee: 'N/A', category: 'Printing', maxTemp: 'N/A' },
+                { rfidId: 'LSR007', itemName: 'Laser Printing Machine', location: 'Printing Section', status: 'available', employee: 'N/A', category: 'Printing', maxTemp: 'N/A' }
+            ];
+
+            sampleItems.forEach(item => {
+                inventory[item.rfidId] = {
+                    ...item,
+                    lastUpdated: new Date().toLocaleString()
+                };
+            });
+
+            updateInventoryTable();
+            updateStats();
+        }
+
+        // Simulate RFID scan
+        function simulateRFID() {
+            const rfidId = document.getElementById('rfidId').value;
+            const itemName = document.getElementById('itemName').value;
+            const action = document.getElementById('action').value;
+            const location = document.getElementById('location').value;
+            const employee = document.getElementById('employee').value;
+
+            if (!rfidId || !itemName) {
+                showAlert('Please fill in RFID ID and Asset Name', 'error');
+                return;
+            }
+
+            const timestamp = new Date();
+            const logEntry = {
+                rfidId,
+                itemName,
+                action,
+                location,
+                employee,
+                timestamp
+            };
+
+            // Update inventory
+            inventory[rfidId] = {
+                rfidId,
+                itemName,
+                location,
+                status: action === 'check-in' ? 'available' : 'checked-out',
+                employee: action === 'check-out' ? employee : 'N/A',
+                lastUpdated: timestamp.toLocaleString()
+            };
+
+            // Add to activity history
+            activityHistory.unshift(logEntry);
+            if (activityHistory.length > 50) {
+                activityHistory.pop();
+            }
+
+            // Update UI
+            addActivityLogEntry(logEntry);
+            updateInventoryTable();
+            updateStats();
+            updateActivityChart();
+            
+            showAlert(`Successfully ${action === 'check-in' ? 'checked in' : 'checked out'} ${itemName}`, 'success');
+
+            // Clear form
+            document.getElementById('rfidId').value = '';
+            document.getElementById('itemName').value = '';
+            document.getElementById('location').value = '';
+            document.getElementById('employee').value = '';
+        }
+
+        // Add activity log entry
+        function addActivityLogEntry(entry) {
+            const logContainer = document.getElementById('activityLog');
+            const logEntry = document.createElement('div');
+            logEntry.className = `log-entry ${entry.action}`;
+            
+            logEntry.innerHTML = `
+                <div class="timestamp">${entry.timestamp.toLocaleString()}</div>
+                <div class="details">
+                    <strong>${entry.itemName}</strong> (${entry.rfidId}) - 
+                    ${entry.action === 'check-in' ? 'Checked In' : 'Checked Out'} 
+                    ${entry.location ? `at ${entry.location}` : ''} 
+                    ${entry.employee && entry.action === 'check-out' ? `by ${entry.employee}` : ''}
+                </div>
+            `;
+
+            logContainer.insertBefore(logEntry, logContainer.firstChild);
+
+            // Remove old entries to prevent overflow
+            const entries = logContainer.querySelectorAll('.log-entry');
+            if (entries.length > 20) {
+                entries[entries.length - 1].remove();
+            }
+        }
+
+        // Update inventory table
+        function updateInventoryTable() {
+            const tbody = document.getElementById('inventoryTableBody');
+            tbody.innerHTML = '';
+
+            Object.values(inventory).forEach(item => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${item.rfidId}</td>
+                    <td>${item.itemName}</td>
+                    <td>${item.location}</td>
+                    <td><span class="status-badge status-${item.status}">${item.status}</span></td>
+                    <td>${item.lastUpdated}</td>
+                    <td>${item.employee}</td>
+                    <td>
+                        <button class="btn btn-sm" onclick="editItem('${item.rfidId}')" style="padding: 5px 10px; font-size: 0.8rem;">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="btn btn-danger btn-sm" onclick="removeItem('${item.rfidId}')" style="padding: 5px 10px; font-size: 0.8rem; margin-left: 5px;">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        // Update statistics
+        function updateStats() {
+            const items = Object.values(inventory);
+            const totalItems = items.length;
+            const availableItems = items.filter(item => item.status === 'available').length;
+            const checkedOutItems = items.filter(item => item.status === 'checked-out').length;
+            
+            const today = new Date().toDateString();
+            const todayActivity = activityHistory.filter(entry => 
+                entry.timestamp.toDateString() === today
+            ).length;
+
+            document.getElementById('totalItems').textContent = totalItems;
+            document.getElementById('availableItems').textContent = availableItems;
+            document.getElementById('checkedOutItems').textContent = checkedOutItems;
+            document.getElementById('todayActivity').textContent = todayActivity;
+        }
+
+        // Initialize activity chart
+        function initActivityChart() {
+            const ctx = document.getElementById('activityChart').getContext('2d');
+            
+            // Generate sample data for the last 7 days
+            const labels = [];
+            const data = [];
+            for (let i = 6; i >= 0; i--) {
+                const date = new Date();
+                date.setDate(date.getDate() - i);
+                labels.push(date.toLocaleDateString('en-US', { weekday: 'short' }));
+                data.push(Math.floor(Math.random() * 25) + 10);
+            }
+
+            activityChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Daily Manufacturing Activity',
+                        data: data,
+                        borderColor: '#fff',
+                        backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                stepSize: 5,
+                                color: '#fff'
+                            },
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            }
+                        },
+                        x: {
+                            ticks: {
+                                color: '#fff'
+                            },
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Update activity chart
+        function updateActivityChart() {
+            if (activityChart) {
+                const today = new Date().toLocaleDateString('en-US', { weekday: 'short' });
+                const todayActivity = activityHistory.filter(entry => 
+                    entry.timestamp.toDateString() === new Date().toDateString()
+                ).length;
+
+                activityChart.data.labels[6] = today;
+                activityChart.data.datasets[0].data[6] = todayActivity;
+                activityChart.update();
+            }
+        }
+
+        // Show alert
+        function showAlert(message, type) {
+            const alertContainer = document.getElementById('alertContainer');
+            const alert = document.createElement('div');
+            alert.className = `alert alert-${type}`;
+            alert.innerHTML = `
+                <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-triangle'}"></i>
+                ${message}
+            `;
+            
+            alertContainer.appendChild(alert);
+            alert.style.display = 'block';
+
+            setTimeout(() => {
+                alert.remove();
+            }, 4000);
+        }
+
+        // Edit item
+        function editItem(rfidId) {
+            const item = inventory[rfidId];
+            document.getElementById('rfidId').value = item.rfidId;
+            document.getElementById('itemName').value = item.itemName;
+            document.getElementById('location').value = item.location;
+            document.getElementById('employee').value = item.employee !== 'N/A' ? item.employee : '';
+            document.getElementById('action').value = item.status === 'available' ? 'check-in' : 'check-out';
+        }
+
+        // Remove item
+        function removeItem(rfidId) {
+            if (confirm('Are you sure you want to remove this asset from the system?')) {
+                delete inventory[rfidId];
+                updateInventoryTable();
+                updateStats();
+                showAlert('Asset removed successfully', 'success');
+            }
+        }
+
+        // Generate random RFID for testing
+        function generateRandomRFID() {
+            const prefixes = ['MFG', 'EXP', 'IMP', 'DSN', 'QC'];
+            const prefix = prefixes[Math.floor(Math.random() * prefixes.length)];
+            return prefix + Math.random().toString(36).substr(2, 4).toUpperCase();
+        }
+
+        // Auto-generate RFID on double-click
+        document.addEventListener('DOMContentLoaded', function() {
+            const rfidInput = document.getElementById('rfidId');
+            if (rfidInput) {
+                rfidInput.addEventListener('dblclick', function() {
+                    this.value = generateRandomRFID();
+                });
+            }
+        });
+
+        // Initialize landing page animations
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add any additional initialization here
+        });
+    </script>
+</body>
+</html>

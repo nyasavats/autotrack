@@ -444,7 +444,7 @@
             background: rgba(200, 0, 0, 0.2);
             border: 1px solid #a00000;
             color: #ff6666;
-    0    }
+       }
 
         @keyframes fadeInUp {
             from {
@@ -514,8 +514,8 @@
                     <i class="fas fa-industry"></i>
                 </div>
                 <h1 class="main-title">AUTOTRACK</h1>
-                <p class="tagline">Smart Manufacturing Inventory Control</p>
-                <p class="subtitle">Advanced RFID-Based Asset Management for Industrial Operations</p>
+                <p class="tagline">Manufacturing Asset Tracking</p>
+                <p class="subtitle">RFID-based asset tracking and inventory monitoring</p>
             </div>
             
             <button class="enter-button" onclick="enterDashboard()">
@@ -524,7 +524,7 @@
         </div>
         
         <div class="factory-info">
-            <i class="fas fa-map-marker-alt"></i> Factory Installation Ready | Import/Export Operations | Design & Manufacturing Hub
+            <i class="fas fa-map-marker-alt"></i> Manufacturing Asset Tracking
         </div>
     </div>
 
@@ -538,7 +538,7 @@
                         <i class="fas fa-arrow-left"></i> Back to Home
                     </button>
                 </div>
-                <p>Real-time inventory tracking and asset management for manufacturing operations</p>
+                <p>Manufacturing asset tracking and inventory monitoring dashboard</p>
                 <div class="manufacturing-badges">
                     <span class="badge"><i class="fas fa-cogs"></i> Manufacturing</span>
                     <span class="badge"><i class="fas fa-shipping-fast"></i> Import/Export</span>
@@ -602,7 +602,7 @@
                             <input type="text" id="employee" placeholder="e.g., OP001">
                         </div>
                         <div class="input-group" style="display: flex; align-items: end;">
-                            <button class="btn" onclick="simulateRFID()">
+                            <button class="btn" onclick="scanAsset()">
                                 <i class="fas fa-satellite-dish"></i> Scan Asset
                             </button>
                         </div>
@@ -617,7 +617,7 @@
                 </div>
 
                 <div class="panel">
-                    <h3><i class="fas fa-history"></i> Live Activity Feed</h3>
+                    <h3><i class="fas fa-history"></i> Activity Feed</h3>
                     <div class="activity-log" id="activityLog">
                         <div class="log-entry">
                             <div class="timestamp">System Initialized</div>
@@ -677,13 +677,13 @@
        
         function loadSampleData() {
             const sampleItems = [
-                { rfidId: 'SPT001', itemName: 'Spinning Tool Machine #1', location: 'Production Floor A', status: 'available', employee: 'N/A', category: 'Spinning', maxTemp: 'N/A' },
-                { rfidId: 'HYD002', itemName: 'Hydraulic Pressing Machine', location: 'Press Section', status: 'checked-out', employee: 'OP001', category: 'Pressing', maxTemp: 'N/A' },
-                { rfidId: 'PWD003', itemName: 'Powder Coating Gun', location: 'Coating Bay', status: 'available', employee: 'N/A', category: 'Coating', maxTemp: 'N/A' },
-                { rfidId: 'CAB004', itemName: 'Powder Coating Cabinet', location: 'Coating Bay', status: 'available', employee: 'N/A', category: 'Coating', maxTemp: 'N/A' },
-                { rfidId: 'FUR005', itemName: 'Industrial Furnace', location: 'Heat Treatment Zone', status: 'checked-out', employee: 'HT001', category: 'Furnace', maxTemp: '1150°C' },
-                { rfidId: 'UV006', itemName: 'UV Printing Machine', location: 'Printing Section', status: 'available', employee: 'N/A', category: 'Printing', maxTemp: 'N/A' },
-                { rfidId: 'LSR007', itemName: 'Laser Printing Machine', location: 'Printing Section', status: 'available', employee: 'N/A', category: 'Printing', maxTemp: 'N/A' }
+                { rfidId: 'SPT001', itemName: 'Spinning Tool Machine #1', location: 'Production Floor A', status: 'available', employee: 'N/A', category: 'Spinning' },
+                { rfidId: 'HYD002', itemName: 'Hydraulic Pressing Machine', location: 'Press Section', status: 'checked-out', employee: 'OP001', category: 'Pressing' },
+                { rfidId: 'PWD003', itemName: 'Powder Coating Gun', location: 'Coating Bay', status: 'available', employee: 'N/A', category: 'Coating' },
+                { rfidId: 'CAB004', itemName: 'Powder Coating Cabinet', location: 'Coating Bay', status: 'available', employee: 'N/A', category: 'Coating' },
+                { rfidId: 'FUR005', itemName: 'Industrial Furnace', location: 'Heat Treatment Zone', status: 'checked-out', employee: 'HT001', category: 'Furnace' },
+                { rfidId: 'UV006', itemName: 'UV Printing Machine', location: 'Printing Section', status: 'available', employee: 'N/A', category: 'Printing' },
+                { rfidId: 'LSR007', itemName: 'Laser Printing Machine', location: 'Printing Section', status: 'available', employee: 'N/A', category: 'Printing' }
             ];
 
             sampleItems.forEach(item => {
@@ -698,7 +698,7 @@
         }
 
 
-        function simulateRFID() {
+        function scanAsset() {
             const rfidId = document.getElementById('rfidId').value;
             const itemName = document.getElementById('itemName').value;
             const action = document.getElementById('action').value;
@@ -840,7 +840,7 @@
                 data: {
                     labels: labels,
                     datasets: [{
-                        label: 'Daily Manufacturing Activity',
+                        label: 'Activity',
                         data: data,
                         borderColor: '#fff',
                         backgroundColor: 'rgba(255, 255, 255, 0.1)',
@@ -950,10 +950,6 @@
             }
         });
 
-     
-        document.addEventListener('DOMContentLoaded', function() {
-        
-        });
     </script>
 </body>
 </html>

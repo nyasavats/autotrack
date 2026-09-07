@@ -642,7 +642,7 @@
                         </tr>
                     </thead>
                     <tbody id="inventoryTableBody">
-                        <!-- Data will be populated by JavaScript -->
+                        
                     </tbody>
                 </table>
             </div>
@@ -667,15 +667,14 @@
             document.getElementById('landingPage').style.display = 'flex';
         }
 
-        // Initialize the dashboard
+       
         function initDashboard() {
             updateStats();
             initActivityChart();
             loadSampleData();
         }
 
-        // Load sample manufacturing data
-        // Load sample manufacturing data
+       
         function loadSampleData() {
             const sampleItems = [
                 { rfidId: 'SPT001', itemName: 'Spinning Tool Machine #1', location: 'Production Floor A', status: 'available', employee: 'N/A', category: 'Spinning', maxTemp: 'N/A' },
@@ -698,7 +697,7 @@
             updateStats();
         }
 
-        // Simulate RFID scan
+
         function simulateRFID() {
             const rfidId = document.getElementById('rfidId').value;
             const itemName = document.getElementById('itemName').value;
@@ -721,7 +720,7 @@
                 timestamp
             };
 
-            // Update inventory
+          
             inventory[rfidId] = {
                 rfidId,
                 itemName,
@@ -731,13 +730,13 @@
                 lastUpdated: timestamp.toLocaleString()
             };
 
-            // Add to activity history
+          
             activityHistory.unshift(logEntry);
             if (activityHistory.length > 50) {
                 activityHistory.pop();
             }
 
-            // Update UI
+         
             addActivityLogEntry(logEntry);
             updateInventoryTable();
             updateStats();
@@ -745,14 +744,14 @@
             
             showAlert(`Successfully ${action === 'check-in' ? 'checked in' : 'checked out'} ${itemName}`, 'success');
 
-            // Clear form
+          
             document.getElementById('rfidId').value = '';
             document.getElementById('itemName').value = '';
             document.getElementById('location').value = '';
             document.getElementById('employee').value = '';
         }
 
-        // Add activity log entry
+       
         function addActivityLogEntry(entry) {
             const logContainer = document.getElementById('activityLog');
             const logEntry = document.createElement('div');
@@ -770,14 +769,14 @@
 
             logContainer.insertBefore(logEntry, logContainer.firstChild);
 
-            // Remove old entries to prevent overflow
+            
             const entries = logContainer.querySelectorAll('.log-entry');
             if (entries.length > 20) {
                 entries[entries.length - 1].remove();
             }
         }
 
-        // Update inventory table
+       
         function updateInventoryTable() {
             const tbody = document.getElementById('inventoryTableBody');
             tbody.innerHTML = '';
@@ -804,7 +803,7 @@
             });
         }
 
-        // Update statistics
+      
         function updateStats() {
             const items = Object.values(inventory);
             const totalItems = items.length;
@@ -822,11 +821,11 @@
             document.getElementById('todayActivity').textContent = todayActivity;
         }
 
-        // Initialize activity chart
+        
         function initActivityChart() {
             const ctx = document.getElementById('activityChart').getContext('2d');
             
-            // Generate sample data for the last 7 days
+            
             const labels = [];
             const data = [];
             for (let i = 6; i >= 0; i--) {
@@ -882,7 +881,7 @@
             });
         }
 
-        // Update activity chart
+       
         function updateActivityChart() {
             if (activityChart) {
                 const today = new Date().toLocaleDateString('en-US', { weekday: 'short' });
@@ -896,7 +895,7 @@
             }
         }
 
-        // Show alert
+     
         function showAlert(message, type) {
             const alertContainer = document.getElementById('alertContainer');
             const alert = document.createElement('div');
@@ -914,7 +913,7 @@
             }, 4000);
         }
 
-        // Edit item
+       
         function editItem(rfidId) {
             const item = inventory[rfidId];
             document.getElementById('rfidId').value = item.rfidId;
@@ -924,7 +923,7 @@
             document.getElementById('action').value = item.status === 'available' ? 'check-in' : 'check-out';
         }
 
-        // Remove item
+        
         function removeItem(rfidId) {
             if (confirm('Are you sure you want to remove this asset from the system?')) {
                 delete inventory[rfidId];
@@ -934,14 +933,14 @@
             }
         }
 
-        // Generate random RFID for testing
+      
         function generateRandomRFID() {
             const prefixes = ['MFG', 'EXP', 'IMP', 'DSN', 'QC'];
             const prefix = prefixes[Math.floor(Math.random() * prefixes.length)];
             return prefix + Math.random().toString(36).substr(2, 4).toUpperCase();
         }
 
-        // Auto-generate RFID on double-click
+        
         document.addEventListener('DOMContentLoaded', function() {
             const rfidInput = document.getElementById('rfidId');
             if (rfidInput) {
@@ -951,9 +950,9 @@
             }
         });
 
-        // Initialize landing page animations
+     
         document.addEventListener('DOMContentLoaded', function() {
-            // Add any additional initialization here
+        
         });
     </script>
 </body>
